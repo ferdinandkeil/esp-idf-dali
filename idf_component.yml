@@ -1,0 +1,4 @@
+version: "0.1.0"
+description: "DALI protocol library for ESP-IDF using the RMT peripheral."
+url: "https://github.com/ferdinandkeil/esp-idf-dali"
+license: "MIT"
