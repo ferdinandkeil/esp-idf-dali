@@ -227,9 +227,6 @@ esp_err_t dali_transaction(dali_addressType_t address_type, uint8_t address, boo
     dali_receivePrevBit_t receive_prev_bit;
     rmt_transmit_config_t transmit_config;
 
-    // Reset RX queue
-    xQueueReset(dali_rxChannelQueue);
-
     // Construct DALI address
     // General format is YAAA AAAS where
     // - Y is 0 for short addresses and 1 for group or broadcast
@@ -242,17 +239,22 @@ esp_err_t dali_transaction(dali_addressType_t address_type, uint8_t address, boo
         if (is_cmd) {
             address_ |= 1;
         }
-    } else {
-        if (address_type == DALI_ADDRESS_TYPE_SHORT) {
-            address_ = DALI_ADDRESS_TYPE_SHORT_MASK;
-        } else {
-            address_ = DALI_ADDRESS_TYPE_GROUP_MASK;
-        }
-        address_ |= (address << 1);
+    } else if (address_type == DALI_ADDRESS_TYPE_SHORT) {
+        address_ = DALI_ADDRESS_TYPE_SHORT_MASK | (address << 1);
         if (is_cmd) {
             address_ |= 1;
         }
+    } else if (address_type == DALI_ADDRESS_TYPE_GROUP) {
+        address_ = DALI_ADDRESS_TYPE_GROUP_MASK | (address << 1);
+        if (is_cmd) {
+            address_ |= 1;
+        }
+    } else {
+        return ESP_ERR_INVALID_ARG;
     }
+
+    // Reset RX queue
+    xQueueReset(dali_rxChannelQueue);
 
     // Copy address and command to TX buffer for transmission
     tx_buffer[0] = address_;
