@@ -5,8 +5,8 @@
 #include <driver/rmt_rx.h>
 #include "dali.h"
 
-#define DALI_ADDRESS_TYPE_SHORT_MASK        0x7e
-#define DALI_ADDRESS_TYPE_GROUP_MASK        0x9e
+#define DALI_ADDRESS_TYPE_SHORT_MASK        0x00
+#define DALI_ADDRESS_TYPE_GROUP_MASK        0x80
 #define DALI_ADDRESS_TYPE_BROADCAST_MASK    0xfe
 #define DALI_ADDRESS_TYPE_SPECIAL_CMD_MASK  0xa0
 
@@ -248,7 +248,7 @@ esp_err_t dali_transaction(dali_addressType_t address_type, uint8_t address, boo
         } else {
             address_ = DALI_ADDRESS_TYPE_GROUP_MASK;
         }
-        address_ &= (address << 1);
+        address_ |= (address << 1);
         if (is_cmd) {
             address_ |= 1;
         }
