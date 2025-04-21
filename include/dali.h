@@ -21,6 +21,8 @@
 
 #define DALI_TX_TIMEOUT_DEFAULT_MS 50
 
+#define DALI_RESULT_NO_REPLY  -1 ///< No reply received from the DALI device
+
 /// A union type to make it easier to access individual bytes of a 16-bit
 /// word, and to use as signed or unsigned type.
 typedef union SI_UU16

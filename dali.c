@@ -13,8 +13,6 @@
 #define DALI_COMMAND_REPEAT_TIME_MS    40
 #define DALI_BACKWARD_FRAME_TIMEOUT_MS 40 // (22 Te + 22 Te) * 417 us/Te = 18 ms
 
-#define DALI_RESULT_NO_REPLY  -1
-
 #define CHECK_ARG(ARG) do { if (!(ARG)) return ESP_ERR_INVALID_ARG; } while (0)
 #define CHECK_FOR_ERROR(X) do { esp_err_t ___ = X; if (___ != ESP_OK) { return ___; }} while(0)
 #define CHECK_POINTER(P) do { if (P == NULL) { return ESP_ERR_NOT_FOUND; }} while(0)
