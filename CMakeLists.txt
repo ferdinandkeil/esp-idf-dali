@@ -2,4 +2,4 @@
 # renamed component "esp_driver_rmt". Please change below.
 idf_component_register(SRCS "dali.c"
                     INCLUDE_DIRS "include"
-                    REQUIRES driver)
+                    REQUIRES esp_driver_rmt)
