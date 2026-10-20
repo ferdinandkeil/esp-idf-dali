@@ -1,7 +1,9 @@
 #ifndef __DALI_H__
 #define __DALI_H__
 
+#include <stdbool.h>
 #include <stdint.h>
+#include <esp_err.h>
 #include <soc/gpio_num.h>
 #include <freertos/task.h>
 
@@ -49,6 +51,17 @@ typedef enum {
  * @return esp_err_t ESP_OK on success or an error code on failure.
  */
 esp_err_t dali_init(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio);
+
+/**
+ * @brief Initialize the DALI interface with configurable TX and RX polarity.
+ *
+ * @param dali_rx_gpio GPIO number for the DALI RX pin.
+ * @param dali_tx_gpio GPIO number for the DALI TX pin.
+ * @param invert_tx Whether to invert the RMT TX output level.
+ * @param invert_rx Whether to invert the RMT RX input level.
+ * @return ESP_OK on success, or an error code.
+ */
+esp_err_t dali_init_with_inversion(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio, bool invert_tx, bool invert_rx);
 
 /**
  * @brief Executes a DALI transaction.

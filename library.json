@@ -1,0 +1,13 @@
+{
+  "name": "esp-idf-dali",
+  "version": "0.1.0",
+  "description": "DALI protocol library for ESP-IDF using the RMT peripheral",
+  "license": "MIT",
+  "frameworks": ["espidf"],
+  "platforms": ["espressif32"],
+  "build": {
+    "srcDir": ".",
+    "srcFilter": ["+<dali.c>"],
+    "includeDir": "include"
+  }
+}

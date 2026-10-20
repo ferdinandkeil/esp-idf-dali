@@ -156,17 +156,17 @@ static bool dali_rmt_rx_done_cb(rmt_channel_handle_t channel, const rmt_rx_done_
     return high_task_wakeup == pdTRUE;
 }
 
-esp_err_t dali_init(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio) {
+static esp_err_t dali_init_internal(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio, bool invert_tx, bool invert_rx) {
     CHECK_ARG(dali_rx_gpio && dali_tx_gpio);
     
     // Create RMT RX channel
     dali_rxChannel = NULL;
     rmt_rx_channel_config_t rx_channel_cfg = {
-        .clk_src = RMT_CLK_SRC_REF_TICK,
+        .clk_src = RMT_CLK_SRC_DEFAULT,
         .resolution_hz = DALI_RMT_RESOLUTION_HZ,
         .mem_block_symbols = 64, // amount of RMT symbols that the channel can store at a time
         .gpio_num = dali_rx_gpio,
-        .flags.invert_in = true,
+        .flags.invert_in = invert_rx,
     };
     CHECK_FOR_ERROR(rmt_new_rx_channel(&rx_channel_cfg, &dali_rxChannel));
         
@@ -187,12 +187,12 @@ esp_err_t dali_init(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio) {
 
     dali_txChannel = NULL;
     dali_txChannelConfig = (rmt_tx_channel_config_t) {
-        .clk_src = RMT_CLK_SRC_REF_TICK, // select source clock
+        .clk_src = RMT_CLK_SRC_DEFAULT, // select source clock
         .gpio_num = dali_tx_gpio,
         .mem_block_symbols = 64,
         .resolution_hz = DALI_RMT_RESOLUTION_HZ,
         .trans_queue_depth = 3, // set the number of transactions that can be pending in the background
-        .flags.invert_out = true,
+        .flags.invert_out = invert_tx,
     };
     CHECK_FOR_ERROR(rmt_new_tx_channel(&dali_txChannelConfig, &dali_txChannel));
 
@@ -208,6 +208,14 @@ esp_err_t dali_init(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio) {
     CHECK_FOR_ERROR(rmt_enable(dali_txChannel));
 
     return ESP_OK;
+}
+
+esp_err_t dali_init(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio) {
+    return dali_init_internal(dali_rx_gpio, dali_tx_gpio, true, true);
+}
+
+esp_err_t dali_init_with_inversion(gpio_num_t dali_rx_gpio, gpio_num_t dali_tx_gpio, bool invert_tx, bool invert_rx) {
+    return dali_init_internal(dali_rx_gpio, dali_tx_gpio, invert_tx, invert_rx);
 }
 
 esp_err_t dali_transaction(dali_addressType_t address_type, uint8_t address, bool is_cmd, uint8_t command, bool send_twice, int tx_timeout_ms, int* result) {
